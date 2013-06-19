@@ -14,19 +14,19 @@ if (!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN', DOKU_INC.'lib/plugins/');
 
 require_once(DOKU_PLUGIN.'syntax.php');
  
-class syntax_plugin_imagemap extends DokuWiki_Syntax_Plugin {
+class syntax_plugin_imagemapzoom extends DokuWiki_Syntax_Plugin {
 
-  function syntax_plugin_imagemap() {
+  function syntax_plugin_imagemapzoom() {
   }
 
   function getInfo(){
     return array(
-      'author' => 'Tom N Harris',
-      'email'  => 'tnharris@whoopdedo.org',
-      'date'   => '2012-05-31',
-      'name'   => 'Image Map Plugin',
-      'desc'   => 'Create client-side image maps.',
-      'url'    => 'http://whoopdedo.org/doku/wiki/imagemap',
+      'author' => 'Stephan Dekker',
+      'email'  => 'stephan@sparklingit.com.au',
+      'date'   => '2013-06-19',
+      'name'   => 'Image Map Zoom Plugin',
+      'desc'   => 'Create client-side image maps with zoom.',
+      'url'    => 'https://github.com/SparklingSoftware/DokuWiki-Plugin-ImageMapZoom.git',
     );
   }
 
@@ -38,10 +38,10 @@ class syntax_plugin_imagemap extends DokuWiki_Syntax_Plugin {
   }
   
   function connectTo($mode) {
-    $this->Lexer->addEntryPattern('\{\{map>[^\}]+\}\}', $mode, 'plugin_imagemap');
+    $this->Lexer->addEntryPattern('\{\{map>[^\}]+\}\}', $mode, 'plugin_imagemapzoom');
   }
   function postConnect() {
-    $this->Lexer->addExitPattern('\{\{<map\}\}', 'plugin_imagemap');
+    $this->Lexer->addExitPattern('\{\{<map\}\}', 'plugin_imagemapzoom');
   }
   
   function handle($match, $state, $pos, &$handler){
@@ -74,7 +74,7 @@ class syntax_plugin_imagemap extends DokuWiki_Syntax_Plugin {
                     $img['align'], $img['width'], $img['height'], 
                     $img['cache']);
 
-      $ReWriter =& new ImageMap_Handler($mapname, $handler->CallWriter);
+      $ReWriter =& new ImageMapZoom_Handler($mapname, $handler->CallWriter);
       $handler->CallWriter =& $ReWriter;
       break;
     case DOKU_LEXER_EXIT:
@@ -108,8 +108,7 @@ class syntax_plugin_imagemap extends DokuWiki_Syntax_Plugin {
         $renderer->doc .= '<input type="button" value="Reset" onclick="$(\'#image\').zoomable(\'reset\')" />';
         $renderer->doc .= '<input type="button" value="zoomOut" onclick="$(\'#image\').zoomable(\'zoomOut\')" />';
         $renderer->doc .= '<input type="button" value="fit" onclick="$(\'#image\').zoomable(\'fit\')" />';
-        $renderer->doc .= '</p>';
-        
+        $renderer->doc .= '</p>';        
         
         $renderer->doc .= '<div id="imagediv" style="overflow:hidden;position:relative;">'.DOKU_LF;
         $src = ml($src,array('w'=>$width,'h'=>$height,'cache'=>$cache));
@@ -206,7 +205,7 @@ class syntax_plugin_imagemap extends DokuWiki_Syntax_Plugin {
         $renderer->doc .= '<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.1.min.js"></script>';
         $renderer->doc .= '<script type="text/javascript" src="https://raw.github.com/brandonaaron/jquery-mousewheel/master/jquery.mousewheel.js"></script>';
         $renderer->doc .= '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>';
-        $renderer->doc .= '<script type="text/javascript" src="lib/plugins/imagemap/js/jquery.zoomable-1.1.js"></script>';
+        $renderer->doc .= '<script type="text/javascript" src="lib/plugins/imagemapzoom/js/jquery.zoomable-1.1.js"></script>';
         $renderer->doc .= '<script type="text/javascript">';
         $renderer->doc .= '    /* <![CDATA[ */';
 
@@ -252,7 +251,7 @@ class syntax_plugin_imagemap extends DokuWiki_Syntax_Plugin {
 
 }
 
-class ImageMap_Handler {
+class ImageMapZoom_Handler {
 
   var $CallWriter;
 
@@ -260,7 +259,7 @@ class ImageMap_Handler {
   var $areas = array();
   var $mapname;
 
-  function ImageMap_Handler($name, &$CallWriter) {
+  function ImageMapZoom_Handler($name, &$CallWriter) {
     $this->CallWriter =& $CallWriter;
     $this->mapname = $name;
   }
@@ -298,7 +297,7 @@ class ImageMap_Handler {
 
   function _addPluginCall($args, $pos) {
     $this->CallWriter->writeCall(array('plugin',
-                                 array('imagemap', $args, $args[0]),
+                                 array('imagemapzoom', $args, $args[0]),
                                  $pos));
   }
 
