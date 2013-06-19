@@ -1,0 +1,1 @@
+return isNaN(e)?d:e},f=p(u[0])(),width:s.innerWidth(),position:a?"fixed":"absolute"}).animate(c,e.duration,e.easing,function(){d.remove(),i()})}})(jQuery);

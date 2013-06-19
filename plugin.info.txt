@@ -1,0 +1,8 @@
+base    imagemapzoom
+author  Stephan Dekker
+email   stephan@sparklingit.com.au
+date    2013-06-19
+name    Image Map Zoom Plugin
+desc    Create client-side image maps with zoom, extends the Image Map plugin
+url     https://github.com/SparklingSoftware/DokuWiki-Plugin-ImageMapZoom.git
+
