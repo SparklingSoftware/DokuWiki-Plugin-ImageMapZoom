@@ -20,8 +20,10 @@
   		  zoomData = $(this).data('zoomData');
 
   	  var init = function() {
-  		if (value.useMap != "") {
-  		  var tempOriginalMap = document.getElementById(value.useMap.substring(1));
+  	      if (value.useMap != "") {
+
+  	    var mapname = value.useMap.substring(1);
+  	    var tempOriginalMap = $('map[name|="' + mapname + '"]').get(0); // There can only be one result, so its safe to only take the first
   		  if (tempOriginalMap != null) {
   		    zoomData.originalMap = tempOriginalMap.cloneNode(true);
   		    // for IE6, we need to manually copy the areas' coords
@@ -36,37 +38,42 @@
   		$(value).css('position', 'relative').css('left', '0').css('top', 0).css('margin', '0');
   		$(value).draggable();
 
-  		// jquery mousewheel not working in FireFox for some reason
-  		if ($.support.ajax) {
-  		  value.addEventListener('DOMMouseScroll', function (e) {
-  			e.preventDefault();
-  			zoomMouse(-e.detail);
-  		  }, false);
-  		  if (value.useMap != "") {
-  		    $(value.useMap)[0].addEventListener('DOMMouseScroll', function (e) {
-  			  e.preventDefault();
-  			  zoomMouse(-e.detail);
-  			}, false);
-  		  }
-  		}
-  		else {
-  		  $(value).bind('mousewheel', function (e) {
-  		    e.preventDefault();
-  			  zoomMouse(e.originalEvent.wheelDelta);
-  	    });
-  		  if (value.useMap != "") {
-  			  $(value.useMap).bind('mousewheel', function (e) {
-  			    e.preventDefault();
-  			    zoomMouse(e.originalEvent.wheelDelta);
-  			  });
-  		  }
-  		}
 
-  		$(value).bind('mousemove', function (e) {
-  		  zoomData.currentX = e.pageX;
-  	      zoomData.currentY = e.pageY;
-  		});
-    };
+  	  };
+
+  	  var enableMouseWheel = function () {
+
+  	      // jquery mousewheel not working in FireFox for some reason
+  	      if ($.support.ajax) {
+  	          value.addEventListener('DOMMouseScroll', function (e) {
+  	              e.preventDefault();
+  	              zoomMouse(-e.detail);
+  	          }, false);
+  	          if (value.useMap != "") {
+  	              $(value.useMap)[0].addEventListener('DOMMouseScroll', function (e) {
+  	                  e.preventDefault();
+  	                  zoomMouse(-e.detail);
+  	              }, false);
+  	          }
+  	      }
+  	      else {
+  	          $(value).bind('mousewheel', function (e) {
+  	              e.preventDefault();
+  	              zoomMouse(e.originalEvent.wheelDelta);
+  	          });
+  	          if (value.useMap != "") {
+  	              $(value.useMap).bind('mousewheel', function (e) {
+  	                  e.preventDefault();
+  	                  zoomMouse(e.originalEvent.wheelDelta);
+  	              });
+  	          }
+  	      }
+
+  	      $(value).bind('mousemove', function (e) {
+  	          zoomData.currentX = e.pageX;
+  	          zoomData.currentY = e.pageY;
+  	      });
+  	  }
 
 	  var left = function() {
 		  return parseInt($(value).css('left'));
@@ -101,27 +108,31 @@
       }
     };
 
-
+    
 
     var zoomMap = function () {
-      // resize image map
-      var map = document.getElementById(value.useMap.substring(1));
+
+        // resize image map
+
+        var mapname = value.useMap.substring(1);
+        var map = $('map[name|="' + mapname + '"]').get(0); // There can only be one result, so its safe to only take the first
+
       if (map != null) {
-        for (var i = 0; i < map.areas.length; i++) {
-          var area = map.areas[i];
-          var originalArea = zoomData.originalMap.areas[i];
-          var coords = originalArea.coords.split(',');
-          for (var j = 0; j < coords.length; j++) {
-            coords[j] = Math.round(coords[j] * zoomData.currentZoom);
+          for (var i = 0; i < map.areas.length; i++) {
+              var area = map.areas[i];
+              var originalArea = zoomData.originalMap.areas[i];
+              var coords = originalArea.coords.split(',');
+              for (var j = 0; j < coords.length; j++) {
+                  coords[j] = Math.round(coords[j] * zoomData.currentZoom);
+              }
+              var coordsString = "";
+              for (var k = 0; k < coords.length; k++) {
+                  if (k > 0)
+                      coordsString += ",";
+                  coordsString += coords[k];
+              }
+              area.coords = coordsString;
           }
-          var coordsString = "";
-          for (var k = 0; k < coords.length; k++) {
-            if (k > 0)
-              coordsString += ",";
-            coordsString += coords[k];
-          }
-          area.coords = coordsString;
-        }
       }
     };
 
@@ -176,7 +187,9 @@
         $(value).css('width', zoomData.originalWidth);
 
         // reset map
-      var map = document.getElementById(value.useMap.substring(1));
+        var mapname = value.useMap.substring(1);
+        var map = $('map[name|="' + mapname + '"]').get(0); // There can only be one result, so its safe to only take the first
+        //var map = document.getElementById(value.useMap.substring(1));
       if (zoomData.originalMap != null) {
         for (var i = 0; i < zoomData.originalMap.areas.length; i++)
   	      map.areas[i].coords = zoomData.originalMap.areas[i].coords;
@@ -219,6 +232,8 @@
 		  reset();
       else if (method == "fit")
           fit();
+      else if (method == "enableMouseWheel")
+          enableMouseWheel();
       else
 		  init();
   });

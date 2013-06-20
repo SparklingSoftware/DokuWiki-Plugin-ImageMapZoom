@@ -104,12 +104,6 @@ class syntax_plugin_imagemapzoom extends DokuWiki_Syntax_Plugin {
           resolve_mediaid(getNS($ID),$src, $exists);
         }
         
-        $renderer->doc .= '<p>';
-        $renderer->doc .= '<input type="button" value="Reset" onclick="$(\'#image\').zoomable(\'reset\')" />';
-        $renderer->doc .= '<input type="button" value="zoomOut" onclick="$(\'#image\').zoomable(\'zoomOut\')" />';
-        $renderer->doc .= '<input type="button" value="fit" onclick="$(\'#image\').zoomable(\'fit\')" />';
-        $renderer->doc .= '</p>';        
-        
         $renderer->doc .= '<div id="imagediv" style="overflow:hidden;position:relative;">'.DOKU_LF;
         $src = ml($src,array('w'=>$width,'h'=>$height,'cache'=>$cache));
         $renderer->doc .= ' <img id="image" src="'.$src.'" class="media'.$align.' imap" usemap="#'.$name.'"';
@@ -126,8 +120,9 @@ class syntax_plugin_imagemapzoom extends DokuWiki_Syntax_Plugin {
           $renderer->doc .= ' width="'.$renderer->_xmlEntities($width).'"';
         if (!is_null($height))
             $renderer->doc .= ' height="'.$renderer->_xmlEntities($height).'"';
-        $renderer->doc .= ' />'.DOKU_LF;
+        $renderer->doc .= ' style="min-width: 0; max-width: none;"/>'.DOKU_LF;
         $renderer->doc .= '</div>'.DOKU_LF;
+        $renderer->doc .= '<p><input type="button" value="Enable Mouse Wheel" onclick="$(\'#image\').zoomable(\'enableMouseWheel\');"/></p>';        
         $renderer->doc .= '<map name="'.$name.'">'.DOKU_LF;
         $has_content = false;
         break;
@@ -202,15 +197,15 @@ class syntax_plugin_imagemapzoom extends DokuWiki_Syntax_Plugin {
         if ($has_content) $renderer->doc .= '</div>'.DOKU_LF;
         $renderer->doc .= '</map>'.DOKU_LF;
 
-        $renderer->doc .= '<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.1.min.js"></script>';
-        $renderer->doc .= '<script type="text/javascript" src="https://raw.github.com/brandonaaron/jquery-mousewheel/master/jquery.mousewheel.js"></script>';
-        $renderer->doc .= '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>';
+        $renderer->doc .= '<script type="text/javascript" src="lib/scripts/jquery/jquery.min.js"></script>';
+        $renderer->doc .= '<script type="text/javascript" src="lib/plugins/imagemapzoom/js/jquery.mousewheel.js"></script>';
+        $renderer->doc .= '<script type="text/javascript" src="lib/scripts/jquery/jquery-ui.min.js"></script>';
         $renderer->doc .= '<script type="text/javascript" src="lib/plugins/imagemapzoom/js/jquery.zoomable-1.1.js"></script>';
+
         $renderer->doc .= '<script type="text/javascript">';
         $renderer->doc .= '    /* <![CDATA[ */';
 
         $renderer->doc .= '    $(window).load(function () {';
-        $renderer->doc .= '        $(\'input:button\').button();';
         $renderer->doc .= '        $(\'#image\').zoomable();';
         $renderer->doc .= '        $(\'#image\').zoomable(\'fit\');';
         $renderer->doc .= '    });';
